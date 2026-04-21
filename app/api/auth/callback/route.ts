@@ -63,7 +63,7 @@ export async function GET(request: Request) {
 
     // Store tokens in cookies (httpOnly)
     const response = NextResponse.redirect(
-      new URL('/dashboard', request.url)
+      new URL('/panel', request.url)
     );
 
     response.cookies.set('spotify_access_token', tokens.access_token, {
