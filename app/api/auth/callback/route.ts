@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import SpotifyAPI from '@/lib/services/spotify-api';
 
 export async function GET(request: Request) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://spotify-stats-universe.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://spotify-api-flax.vercel.app';
   const redirectUri = `${appUrl}/api/auth/callback`;
 
   const spotifyClientId = process.env.SPOTIFY_CLIENT_ID || '';
