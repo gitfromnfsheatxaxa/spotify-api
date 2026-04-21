@@ -1,0 +1,66 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done"
+  },
+  "auth": {
+    "login": "Login with Spotify",
+    "description": "Connect your Spotify account to unlock your personalized stats and insights",
+    "permissions": "We'll only use your data to show your listening habits",
+    "callback": "Completing login...",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Your Spotify Stats",
+    "welcome": "Welcome back",
+    "timeRange": {
+      "4weeks": "4 Weeks",
+      "6months": "6 Months",
+      "alltime": "All Time"
+    },
+    "lastUpdated": "Last updated"
+  },
+  "stats": {
+    "recentlyPlayed": "Recently Played",
+    "topArtists": "Top Artists",
+    "topTracks": "Top Tracks",
+    "genres": "Your Genres",
+    "obsessionScore": "Obsession Score",
+    "aiRoast": "AI Roast",
+    "play": "Play",
+    "more": "View More",
+    "artists": "artists",
+    "tracks": "tracks"
+  },
+  "visuals": {
+    "obscurityIceberg": "Obscurity Iceberg",
+    "festivalPoster": "Festival Poster",
+    "receiptify": "Receiptify",
+    "moodRadar": "Mood Radar",
+    "genreGlobe": "Genre Globe",
+    "generate": "Generate",
+    "download": "Download"
+  },
+  "share": {
+    "title": "Share Your Stats",
+    "instagram": "Instagram Story",
+    "download": "Download Image",
+    "copyLink": "Copy Link",
+    "copied": "Copied to clipboard!",
+    "share": "Share"
+  },
+  "errors": {
+    "notAuthenticated": "Please login to view your stats",
+    "privateAccount": "This account is private. Please upgrade to view stats.",
+    "rateLimit": "Too many requests. Please wait a moment.",
+    "generic": "Something went wrong. Please try again."
+  }
+}

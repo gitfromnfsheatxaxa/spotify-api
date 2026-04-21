@@ -1,0 +1,66 @@
+{
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik yuz berdi",
+    "retry": "Qayta urinish",
+    "continue": "Davom etish",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "close": "Yopish",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "done": "Tayyor"
+  },
+  "auth": {
+    "login": "Spotify orqali kirish",
+    "description": "Shaxsiy statistika va tahlillarni ochish uchun Spotify hisobingizni ulang",
+    "permissions": "Biz ma'lumotlaringizni faqat musiqa afzalliklaringizni ko'rsatish uchun ishlatamiz",
+    "callback": "Kirish tugatilmoqda...",
+    "logout": "Chiqish"
+  },
+  "dashboard": {
+    "title": "Spotify statistikaniz",
+    "welcome": "Qaytganingizdan xursandmiz",
+    "timeRange": {
+      "4weeks": "4 hafta",
+      "6months": "6 oy",
+      "alltime": "Barcha vaqt"
+    },
+    "lastUpdated": "Oxirgi yangilanish"
+  },
+  "stats": {
+    "recentlyPlayed": "So'nggi o'qilganlar",
+    "topArtists": "Eng yaxshi ijrochilar",
+    "topTracks": "Eng yaxshi treklar",
+    "genres": "Sizning janrlaringiz",
+    "obsessionScore": "O'chlik balli",
+    "aiRoast": "AI hazil",
+    "play": "O'qish",
+    "more": "Ko'proq ko'rish",
+    "artists": "ijrochilar",
+    "tracks": "treklar"
+  },
+  "visuals": {
+    "obscurityIceberg": "Noma'lumlik muztog'i",
+    "festivalPoster": "Festival plakati",
+    "receiptify": "Chek",
+    "moodRadar": "Kayfiyat radari",
+    "genreGlobe": "Janrlar globusi",
+    "generate": "Yaratish",
+    "download": "Yuklab olish"
+  },
+  "share": {
+    "title": "Statistikanizni baham ko'ring",
+    "instagram": "Instagram Story",
+    "download": "Rasmni yuklab olish",
+    "copyLink": "Havolani nusxalash",
+    "copied": "Buferga nusxalandi!",
+    "share": "Baham ko'rish"
+  },
+  "errors": {
+    "notAuthenticated": "Statistikani ko'rish uchun iltimos kiring",
+    "privateAccount": "Bu hisob maxfiy. Statistikani ko'rish uchun yangilang.",
+    "rateLimit": "Juda ko'p so'rovlar. Iltimos, biroz kuting.",
+    "generic": "Biror narsa noto'g'ri bo'ldi. Iltimos, qayta urinib ko'ring."
+  }
+}

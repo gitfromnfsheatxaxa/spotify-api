@@ -1,0 +1,14 @@
+'use client';
+
+import { NextIntlClientProvider } from 'next-intl';
+import { useMessages } from 'next-intl';
+
+export function IntlProvider({ children }: { children: React.ReactNode }) {
+  const messages = useMessages();
+
+  return (
+    <NextIntlClientProvider messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
