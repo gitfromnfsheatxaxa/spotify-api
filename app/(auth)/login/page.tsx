@@ -83,7 +83,7 @@ export default function LoginPage() {
     setIsLoading(true);
     
     const spotifyClientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || 'your-client-id';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://spotify-stats-universe.vercel.app';
     const redirectUri = `${appUrl}/api/auth/callback`;
     const scopes = [
       'user-top-read',
