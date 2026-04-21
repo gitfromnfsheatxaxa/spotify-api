@@ -1,4 +1,4 @@
-ls export type Locale = 'en' | 'ru' | 'uz';
+export type Locale = 'en' | 'ru' | 'uz';
 
 export type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
