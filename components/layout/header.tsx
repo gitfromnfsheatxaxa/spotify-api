@@ -32,7 +32,7 @@ export function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 glass-card border-0 border-b border-white/10"
+      className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 rounded-b-2xl rounded-t-none"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -53,7 +53,7 @@ export function Header() {
             <div className="relative">
               <motion.button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full glass-card hover:bg-white/10 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-full btn-glass hover:bg-white/10 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -75,10 +75,10 @@ export function Header() {
                         setLocale(loc.code);
                         setShowLangMenu(false);
                       }}
-                      className={cn(
-                        'w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition-colors',
-                        locale === loc.code && 'bg-white/10'
-                      )}
+                  className={cn(
+                    'w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition-colors',
+                    locale === loc.code && 'bg-white/10'
+                  )}
                     >
                       <span className="text-xl">{loc.flag}</span>
                       <span className="text-sm">{loc.label}</span>
@@ -97,7 +97,7 @@ export function Header() {
             {/* User Info / Login */}
             {isAuthenticated && user ? (
               <motion.div
-                className="flex items-center gap-3 px-4 py-2 rounded-full glass-card"
+                className="flex items-center gap-3 px-4 py-2 rounded-full glass"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
@@ -120,7 +120,7 @@ export function Header() {
             ) : (
               <motion.a
                 href="/login"
-                className="neon-button"
+                className="btn-glass-accent"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

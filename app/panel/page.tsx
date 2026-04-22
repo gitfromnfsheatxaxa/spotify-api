@@ -4,18 +4,24 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/stores/auth-store';
 import { useDashboardStore } from '@/stores/dashboard-store';
-import { useCurrentUser, useTopArtists, useTopTracks, useGenreStats } from '@/lib/hooks/use-spotify-data';
-import { Music, TrendingUp, Palette, ArrowLeft, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
-import { formatDuration } from '@/lib/utils/format';
-import type { TimeRange } from '@/lib/types/app';
+import { useCurrentUser, useTopArtists, useTopTracks, useGenreStats, useRecentlyPlayed } from '@/lib/hooks/use-spotify-data';
+import { Loader2, ArrowLeft, Share2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { TimeRangeTabs } from '@/components/dashboard/time-range-tabs';
+import { UserInfo } from '@/components/dashboard/user-info';
+import { RecentlyPlayed } from '@/components/dashboard/recently-played';
+import { TopArtists } from '@/components/dashboard/top-artists';
+import { TopTracks } from '@/components/dashboard/top-tracks';
+import { GenreChart } from '@/components/dashboard/genre-chart';
+import { ObsessionScore } from '@/components/dashboard/obsession-score';
+import { AIRoast } from '@/components/dashboard/ai-roast';
 
 export default function DashboardPage() {
-  const { isAuthenticated, login } = useAuthStore();
-  const { locale } = useDashboardStore();
-  const [timeRange, setTimeRange] = useState<TimeRange>('short_term');
+  const { login } = useAuthStore();
+  const { locale, timeRange, setTimeRange } = useDashboardStore();
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+  const router = useRouter();
 
   const translations: Record<string, Record<string, string>> = {
     en: {
@@ -24,9 +30,6 @@ export default function DashboardPage() {
       topArtists: 'Top Artists',
       topTracks: 'Top Tracks',
       genreDistribution: 'Genre Distribution',
-      shortTerm: 'Last 4 Weeks',
-      mediumTerm: 'Last 6 Months',
-      longTerm: 'All Time',
       noData: 'No data available',
       back: 'Back to Home',
     },
@@ -36,9 +39,6 @@ export default function DashboardPage() {
       topArtists: 'Топ исполнителей',
       topTracks: 'Топ треков',
       genreDistribution: 'Распределение жанров',
-      shortTerm: 'Последние 4 недели',
-      mediumTerm: 'Последние 6 месяцев',
-      longTerm: 'За всё время',
       noData: 'Нет данных',
       back: 'На главную',
     },
@@ -48,9 +48,6 @@ export default function DashboardPage() {
       topArtists: 'Eng yaxshi ijrochilar',
       topTracks: 'Eng yaxshi treklar',
       genreDistribution: 'Janrlar taqsimoti',
-      shortTerm: 'Oxirgi 4 hafta',
-      mediumTerm: 'Oxirgi 6 oy',
-      longTerm: 'Barcha vaqt',
       noData: 'Ma\'lumot yo\'q',
       back: 'Bosh sahifaga',
     },
@@ -62,8 +59,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log('[Panel Page] Checking auth session...');
         const response = await fetch('/api/auth/session');
         const data = await response.json();
+        console.log('[Panel Page] Auth session response:', data);
 
         if (data.isAuthenticated && data.user) {
           // Update auth store with user data
@@ -74,13 +73,15 @@ export default function DashboardPage() {
             expires_in: 3600,
           });
           setIsAuthInitialized(true);
+          console.log('[Panel Page] User authenticated:', data.user.display_name);
         } else {
           // Not authenticated - redirect to login
-          window.location.href = '/login';
+          console.log('[Panel Page] User not authenticated, would redirect to /login');
+          // window.location.href = '/login'; // Commented for debugging
         }
       } catch (error) {
-        console.error('Failed to check auth session:', error);
-        window.location.href = '/login';
+        console.error('[Panel Page] Failed to check auth session:', error);
+        // window.location.href = '/login'; // Commented for debugging
       }
     };
 
@@ -98,6 +99,9 @@ export default function DashboardPage() {
     enabled: isAuthInitialized,
   });
   const { data: genres } = useGenreStats(timeRange, {
+    enabled: isAuthInitialized,
+  });
+  const { data: recentlyPlayed } = useRecentlyPlayed({
     enabled: isAuthInitialized,
   });
 
@@ -137,156 +141,61 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold gradient-text">{t.welcome}</h1>
             <p className="text-text-secondary mt-1">{user?.display_name}</p>
           </div>
-          <Link
-            href="/"
-            className="flex items-center gap-2 px-4 py-2 rounded-full glass-card hover:bg-white/10 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t.back}
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const shareData = {
+                  topArtist: artists?.[0]?.name || 'Unknown',
+                  topGenre: genres?.[0]?.genre || 'Unknown',
+                  totalArtists: artists?.length || 0,
+                  obsessionScore: 75,
+                };
+                const encodedData = encodeURIComponent(JSON.stringify(shareData));
+                router.push(`/share/1?data=${encodedData}`);
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded-full btn-glass-accent"
+            >
+              <Share2 className="w-4 h-4" />
+              Share Stats
+            </button>
+            <Link
+              href="/"
+              className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t.back}
+            </Link>
+          </div>
         </motion.div>
 
         {/* Time Range Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-2 mb-8"
-        >
-          {[
-            { value: 'short_term', label: t.shortTerm },
-            { value: 'medium_term', label: t.mediumTerm },
-            { value: 'long_term', label: t.longTerm },
-          ].map((range) => (
-            <button
-              key={range.value}
-              onClick={() => setTimeRange(range.value as TimeRange)}
-              className={cn(
-                'px-6 py-2 rounded-full glass-card transition-all',
-                timeRange === range.value
-                  ? 'bg-neon-cyan/20 ring-2 ring-neon-cyan'
-                  : 'hover:bg-white/10'
-              )}
-            >
-              {range.label}
-            </button>
-          ))}
-        </motion.div>
+        <TimeRangeTabs />
+
+        {/* Recently Played */}
+        <RecentlyPlayed tracks={recentlyPlayed || []} />
 
         {/* Top Artists */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <Music className="w-6 h-6 text-neon-purple" />
-            <h2 className="text-2xl font-bold">{t.topArtists}</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {artists?.map((artist, i) => (
-              <motion.div
-                key={artist.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + i * 0.05 }}
-                className="glass-card p-4 text-center group cursor-pointer"
-              >
-                <img
-                  src={artist.images[0]?.url || '/default-avatar.png'}
-                  alt={artist.name}
-                  className="w-20 h-20 rounded-full mx-auto mb-3 object-cover group-hover:scale-110 transition-transform"
-                />
-                <p className="text-sm font-medium truncate">{artist.name}</p>
-                <p className="text-xs text-text-tertiary mt-1">#{i + 1}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+        <TopArtists artists={artists || []} />
 
         {/* Top Tracks */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-12"
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="w-6 h-6 text-neon-pink" />
-            <h2 className="text-2xl font-bold">{t.topTracks}</h2>
-          </div>
-          <div className="space-y-3">
-            {tracks?.map((track, i) => (
-              <motion.div
-                key={track.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + i * 0.05 }}
-                className="glass-card p-4 flex items-center gap-4 group"
-              >
-                <span className="text-2xl font-bold text-text-tertiary w-8">
-                  {i + 1}
-                </span>
-                <img
-                  src={track.album.images[0]?.url || '/default-album.png'}
-                  alt={track.name}
-                  className="w-16 h-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{track.name}</p>
-                  <p className="text-sm text-text-secondary truncate">
-                    {track.artists.map((a) => a.name).join(', ')}
-                  </p>
-                </div>
-                <div className="text-sm text-text-tertiary">
-                  {formatDuration(track.duration_ms)}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+        <TopTracks tracks={tracks || []} />
 
         {/* Genre Distribution */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <Palette className="w-6 h-6 text-neon-green" />
-            <h2 className="text-2xl font-bold">{t.genreDistribution}</h2>
-          </div>
-          <div className="glass-card p-6">
-            {genres?.map((genre, i) => (
-              <motion.div
-                key={genre.genre}
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: '100%' }}
-                transition={{ delay: 0.7 + i * 0.05 }}
-                className="mb-4 last:mb-0"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium capitalize">{genre.genre}</span>
-                  <span className="text-sm text-text-secondary">{genre.percentage}%</span>
-                </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${genre.percentage}%` }}
-                    transition={{ delay: 0.8 + i * 0.05, duration: 0.5 }}
-                    className={cn(
-                      'h-full rounded-full',
-                      i === 0 ? 'bg-neon-cyan' :
-                      i === 1 ? 'bg-neon-purple' :
-                      i === 2 ? 'bg-neon-pink' : 'bg-neon-green'
-                    )}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+        <GenreChart genres={genres || []} />
+
+        {/* Obsession Score */}
+        <ObsessionScore
+          score={{
+            overall: 75,
+            diversity: 68,
+            popularity: 82,
+            loyalty: 71,
+            labels: ['Eclectic', 'Weekend Warrior', 'Deep Diver'],
+          }}
+        />
+
+        {/* AI Roast */}
+        <AIRoast userName={user?.display_name} />
       </div>
     </div>
   );

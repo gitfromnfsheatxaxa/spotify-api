@@ -75,7 +75,8 @@ export default function LoginPage() {
   // Redirect to dashboard if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      window.location.href = '/panel';
+      // window.location.href = '/panel'; // Commented for debugging
+      console.log('[Login Page] User is authenticated, would redirect to /panel');
     }
   }, [isAuthenticated]);
 

@@ -19,6 +19,12 @@ export async function GET(request: Request) {
   }
 
   try {
+    console.log('[Auth Callback] Starting token exchange...');
+    console.log('[Auth Callback] Client ID present:', spotifyClientId ? 'YES' : 'NO');
+    console.log('[Auth Callback] Secret present:', spotifyClientSecret ? 'YES' : 'NO');
+    console.log('[Auth Callback] Redirect URI:', redirectUri);
+    console.log('[Auth Callback] Code length:', code?.length);
+
     // Exchange code for tokens
     const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
@@ -33,9 +39,11 @@ export async function GET(request: Request) {
       }),
     });
 
+    console.log('[Auth Callback] Token response status:', tokenResponse.status);
+    
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
-      console.error('Spotify token exchange error:', tokenResponse.status, errorText);
+      console.error('[Auth Callback] Spotify token exchange error:', tokenResponse.status, errorText);
       throw new Error(`Failed to exchange code for token: ${errorText}`);
     }
 
@@ -66,9 +74,18 @@ export async function GET(request: Request) {
       new URL('/panel', request.url)
     );
 
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // Debug: log cookie settings
+    console.log('Setting cookies - isProduction:', isProduction);
+    console.log('User data:', {
+      id: user.id,
+      display_name: user.display_name,
+    });
+
     response.cookies.set('spotify_access_token', tokens.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'lax',
       maxAge: 3600, // 1 hour
       path: '/',
@@ -77,7 +94,7 @@ export async function GET(request: Request) {
     if (tokens.refresh_token) {
       response.cookies.set('spotify_refresh_token', tokens.refresh_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
         sameSite: 'lax',
         maxAge: 31536000, // 1 year
         path: '/',
@@ -86,19 +103,24 @@ export async function GET(request: Request) {
 
     // Store user data in a non-httpOnly cookie for client access
     // Only include non-sensitive user info - tokens stay in httpOnly cookies
-    response.cookies.set('spotify_user', JSON.stringify({
+    const userData = JSON.stringify({
       id: user.id,
       display_name: user.display_name,
       images: user.images,
       country: user.country,
       product: user.product,
-    }), {
+    });
+    
+    console.log('Setting spotify_user cookie with data:', userData.substring(0, 50) + '...');
+    
+    response.cookies.set('spotify_user', userData, {
       maxAge: 3600,
       path: '/',
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'lax',
     });
 
+    console.log('Cookies set successfully!');
     return response;
   } catch (error) {
     console.error('OAuth callback error:', error);

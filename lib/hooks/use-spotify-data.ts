@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { SpotifyUser, SpotifyArtist, SpotifyTrack } from '@/lib/types/spotify';
+import type { SpotifyUser, SpotifyArtist, SpotifyTrack, SpotifyRecentlyPlayed } from '@/lib/types/spotify';
 import type { TimeRange, GenreStats } from '@/lib/types/app';
 
 export function useCurrentUser(options?: { enabled?: boolean }) {
@@ -69,6 +69,24 @@ export function useGenreStats(timeRange: TimeRange = 'short_term', options?: { e
       return response.json();
     },
     staleTime: 5 * 60 * 1000,
+    enabled: options?.enabled ?? true,
+  });
+}
+
+export function useRecentlyPlayed(options?: { enabled?: boolean }) {
+  return useQuery<SpotifyRecentlyPlayed[]>({
+    queryKey: ['recentlyPlayed'],
+    queryFn: async () => {
+      const response = await fetch('/api/spotify/recently-played');
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Unauthorized');
+        }
+        throw new Error('Failed to fetch recently played');
+      }
+      return response.json();
+    },
+    staleTime: 30 * 1000,
     enabled: options?.enabled ?? true,
   });
 }
